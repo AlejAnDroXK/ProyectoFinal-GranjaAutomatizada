@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Dice que proyecto es, version de java, librerias, como se construye la app -->
+<!-- Project:  Indica que usas el formato estándar de Maven 4.0.0-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <!-- Crea esto sistema-riego-1.0-SNAPSHOT.jar -->
+    <groupId>com.granja</groupId> <!--Organizacion-->
+    <artifactId>sistema-riego</artifactId><!--Nombre proyecto-->
+    <version>1.0-SNAPSHOT</version><!--Version proyecto-->
+    <packaging>jar</packaging><!--Generar el .jar-->
+    <!-- Nombre legible para las personas -->
+    <name>Sistema de Riego Automatizado</name>
+    <!-- Define svalores globales -->
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source><!--Java 11 para compilar-->
+        <maven.compiler.target>11</maven.compiler.target><!--Java 11 para compilar-->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><!--Codificacion UTF-8-->
+        <vaadin.version>24.3.0</vaadin.version> <!--Version de Vaadin-->
+    </properties>
+    <!--Spring BOOT como padre-->
+    <!--Configura Maven, define versiones compatibles,simplifica dependencias-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version>
+    </parent>
+    <!--Gestión de versiones Vaadin-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-bom</artifactId>
+                <version>${vaadin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <!--Todas las librerías Vaadin usarán versiones compatibles entre sí-->
+
+    <!--Dependencias Vaadin + Spring Boot-->
+    <dependencies>
+        <!--Crear la interfaz web-->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-spring-boot-starter</artifactId>
+        </dependency>
+        <!--Base de datos (guarda)-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <!--Permite conectarte a MySQL-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+        <!--Reduce código (get,set,constructores)-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--Comunicación por puerto serie-->
+        <dependency>
+            <groupId>com.fazecast</groupId>
+            <artifactId>jSerialComm</artifactId>
+            <version>2.10.4</version>
+        </dependency>
+        <!--DevTools, Reinicio automático-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <!--Como se construye-->
+    <build>
+        <plugins>
+            <!--Genera un .jar ejecutable-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!--Preparar frontend, compilar recursos, integrar UI con Java-->
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-maven-plugin</artifactId>
+                <version>${vaadin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-frontend</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
