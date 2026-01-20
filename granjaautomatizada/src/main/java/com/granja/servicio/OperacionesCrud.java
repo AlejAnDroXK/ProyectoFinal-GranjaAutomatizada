@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service // Marca la clase como un servicio de Spring. Se dasarrollo con java y el framework de SpringBoot
 @Transactional // Gestión de transacciones a nivel de servicio. Cuando ocurre un error no deja la data se guarde
 @RequiredArgsConstructor // Inyección de dependencias a través del constructor.
-public class PersistenciaService {
+public class OperacionesCrud {
 
     private final UsuarioRepositorio usuarioRepositorio;
 
@@ -28,6 +28,12 @@ public class PersistenciaService {
     private final LecturaHumedadRepositorio lecturaRepository;
 
     private final HistorialEncendidoRepositorio historialRepository;
+
+
+    public boolean buscarPorEmailActivo(String email) {
+        Optional<UsuarioEntidad> usuario = usuarioRepositorio.findByEmail(email);
+        return usuario.map(UsuarioEntidad::isActivo).orElse(false);
+    }
 
     public void guardarUsuario(Usuario usuario) {
         UsuarioEntidad entity = new UsuarioEntidad(

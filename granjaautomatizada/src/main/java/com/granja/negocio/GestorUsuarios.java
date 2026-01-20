@@ -1,7 +1,7 @@
 package com.granja.negocio;
 
 import com.granja.modelo.Usuario;
-import com.granja.servicio.PersistenciaService;
+import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.GranjaException;
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ public class GestorUsuarios {
     private ArrayList<Usuario> usuarios;
     private Usuario usuarioActual;
     private int contadorUsuarios;
-    private PersistenciaService persistenciaService;
+    private OperacionesCrud operacionesCrud;
 
     public GestorUsuarios(GestorGranja gestorGranja) {
         this.gestorGranja = gestorGranja;
@@ -25,15 +25,15 @@ public class GestorUsuarios {
         this.contadorUsuarios = 1;
     }
 
-    public void setPersistenciaService(PersistenciaService persistenciaService) {
-        this.persistenciaService = persistenciaService;
+    public void setPersistenciaService(OperacionesCrud operacionesCrud) {
+        this.operacionesCrud = operacionesCrud;
         cargarUsuariosDesdeDB();
     }
 
     private void cargarUsuariosDesdeDB() {
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                usuarios = (ArrayList<Usuario>) persistenciaService.cargarUsuarios();
+                usuarios = (ArrayList<Usuario>) operacionesCrud.cargarUsuarios();
                 if (!usuarios.isEmpty()) {
                     contadorUsuarios = usuarios.size() + 1;
                     return;
@@ -51,22 +51,27 @@ public class GestorUsuarios {
         agregarUsuario("María", "González", "maria.gonzalez@granja.com", "0976543210", "Supervisor");
     }
 
-    public void agregarUsuario(String nombre, String apellido, String email, String telefono, String rol) {
+    public boolean agregarUsuario(String nombre, String apellido, String email, String telefono, String rol) {
         String id = "USER_" + contadorUsuarios;
         Usuario usuario = new Usuario(id, nombre, apellido, email, telefono, rol);
-        usuarios.add(usuario);
-        contadorUsuarios++;
-
-        if (persistenciaService != null) {
+        if (operacionesCrud != null) {
             try {
-                persistenciaService.guardarUsuario(usuario);
-                System.out.println("Usuario guardado en BD: " + usuario.getNombreCompleto());
+                if(!operacionesCrud.buscarPorEmailActivo(email)) {
+                    operacionesCrud.guardarUsuario(usuario);
+                    System.out.println("Usuario guardado en BD: " + usuario.getNombreCompleto());
+                    usuarios.add(usuario);
+                    contadorUsuarios++;
+                    return true;
+                }else {
+                    System.out.println("Este usuario ya se encuentra registrado");
+                    return false;
+                }
             } catch (Exception e) {
                 System.out.println("Error guardando usuario en BD: " + e.getMessage());
             }
         }
-
         System.out.println("Usuario registrado: " + usuario.getNombreCompleto() + " (" + id + ")");
+        return false;
     }
 
     public void seleccionarUsuarioActual(String idUsuario) throws GranjaException {

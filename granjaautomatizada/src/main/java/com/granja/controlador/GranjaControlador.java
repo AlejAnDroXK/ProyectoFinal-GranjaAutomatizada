@@ -2,28 +2,22 @@ package com.granja.controlador;
 
 import com.granja.modelo.*;
 import com.granja.negocio.*;
-import com.granja.servicio.PersistenciaService;
+import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.GranjaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
-@Component // Marca la clase como un componente gestionado por Spring
-public class GranjaController { // Controlador principal que maneja las operaciones de la granja
+@Component
+public class GranjaControlador {
     private final GestorGranja gestorGranja;
-    private final PersistenciaService persistenciaService;
+    private final OperacionesCrud operacionesCrud;
 
-    @Autowired // Inyección de dependencias a través del constructor
-    public GranjaController(GestorGranja gestorGranja, PersistenciaService persistenciaService) {
+    @Autowired
+    public GranjaControlador(GestorGranja gestorGranja, OperacionesCrud operacionesCrud) {
         this.gestorGranja = gestorGranja;
-        this.persistenciaService = persistenciaService;
-        gestorGranja.setPersistenciaService(persistenciaService);
-        inicializarSistema();
-    }
-
-    private void inicializarSistema() {
-        gestorGranja.getGestorAspersores().agregarAspersoresInventario(10);
-        gestorGranja.getGestorSensores().agregarSensoresInventario(10);
+        this.operacionesCrud = operacionesCrud;
+        gestorGranja.setPersistenciaService(operacionesCrud);
     }
 
     public ArrayList<Usuario> obtenerUsuarios() {
@@ -42,8 +36,8 @@ public class GranjaController { // Controlador principal que maneja las operacio
         return gestorGranja.getGestorUsuarios().getUsuarioActual();
     }
 
-    public void agregarUsuario(String nombre, String apellido, String email, String telefono, String rol) {
-        gestorGranja.getGestorUsuarios().agregarUsuario(nombre, apellido, email, telefono, rol);
+    public boolean agregarUsuario(String nombre, String apellido, String email, String telefono, String rol) {
+        return gestorGranja.getGestorUsuarios().agregarUsuario(nombre, apellido, email, telefono, rol);
     }
 
     public void cerrarSesionUsuario() {
@@ -94,8 +88,16 @@ public class GranjaController { // Controlador principal que maneja las operacio
         gestorGranja.getGestorAspersores().asignarAspersorAParcela(idParcela);
     }
 
+    public void asignarAspersorEspecificoAParcela(String idAspersor, String idParcela) throws GranjaException {
+        gestorGranja.getGestorAspersores().asignarAspersorEspecificoAParcela(idAspersor, idParcela);
+    }
+
     public void asignarSensorAParcela(String idParcela) throws GranjaException {
         gestorGranja.getGestorSensores().asignarSensorAParcela(idParcela);
+    }
+
+    public void asignarSensorEspecificoAParcela(String idSensor, String idParcela) throws GranjaException {
+        gestorGranja.getGestorSensores().asignarSensorEspecificoAParcela(idSensor, idParcela);
     }
 
     public ArrayList<Cultivo> obtenerCultivosDisponibles() {

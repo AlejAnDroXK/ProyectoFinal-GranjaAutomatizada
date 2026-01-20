@@ -1,7 +1,7 @@
 package com.granja.interfaz;
 
 import com.granja.negocio.*;
-import com.granja.servicio.PersistenciaService;
+import com.granja.servicio.OperacionesCrud;
 import com.granja.utilitario.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -23,7 +23,7 @@ public class VentanaComandos implements CommandLineRunner {
     private GestorGranja gestorGranja;
 
     @Autowired
-    private PersistenciaService persistenciaService;
+    private OperacionesCrud operacionesCrud;
 
     private static final Scanner scanner = new Scanner(System.in);
 
@@ -49,15 +49,11 @@ public class VentanaComandos implements CommandLineRunner {
     }
 
     private void inicializarSistema() {
-        gestorGranja.setPersistenciaService(persistenciaService);
-        gestorGranja.getGestorAspersores().agregarAspersoresInventario(10);
-        gestorGranja.getGestorSensores().agregarSensoresInventario(10);
-        System.out.println("Sistema inicializado con 10 aspersores y 10 sensores en inventario.");
+        gestorGranja.setPersistenciaService(operacionesCrud);
     }
 
     private void ejecutarMenuPrincipal() {
         boolean continuar = true;
-
         while (continuar) {
             try {
                 Util.mostrarMenuPrincipal();
