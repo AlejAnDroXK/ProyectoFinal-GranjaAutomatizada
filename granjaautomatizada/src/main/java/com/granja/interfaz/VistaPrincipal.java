@@ -21,12 +21,16 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route("")
+@Route("")//se abre en la URL raíz
 public class VistaPrincipal extends VerticalLayout {
     private final GranjaControlador controller;
     private VerticalLayout contentLayout;
     private HorizontalLayout userBar;
 
+    //Inyección del controlador
+    //no tiene logica de negocio
+    //Todo se hace a través de GranjaControlador
+    //Esto mantiene el código ordenado y desacoplado
     @Autowired
     public VistaPrincipal(GranjaControlador controller) {
         this.controller = controller;
@@ -43,11 +47,14 @@ public class VistaPrincipal extends VerticalLayout {
         contentLayout = new VerticalLayout();
         contentLayout.setSizeFull();
 
+        //pantalla se divide en 4 partes
+        //Título,Barra de usuario,Tabs (menú),Contenido dinámico
         add(title, userBar, tabs, contentLayout);
 
         mostrarVistaUsuarios();
     }
 
+    //Barra de usuario
     private HorizontalLayout createUserBar() {
         HorizontalLayout userBarLayout = new HorizontalLayout();
         userBarLayout.setWidthFull();
@@ -75,13 +82,16 @@ public class VistaPrincipal extends VerticalLayout {
 
         return userBarLayout;
     }
-
+    //Refresca la UI sin recargar la página
     private void actualizarBarraUsuario() {
         remove(userBar);
         userBar = createUserBar();
         addComponentAtIndex(1, userBar);
     }
 
+    //Esto es Single Page Application (SPA)
+    //navegación principal
+    //NO cambia de página, solo cambia el contenido
     private Tabs createTabs() {
         Tab usuariosTab = new Tab("Usuarios");
         Tab parcelasTab = new Tab("Parcelas");
